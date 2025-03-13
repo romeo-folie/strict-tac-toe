@@ -19,11 +19,19 @@ class Board:
     # modify board state with the given symbol
     position = map(int, position.replace(',', ' ').split())
     row, col = next(position), next(position)
-    # handle the case when the spot is already occupied
+    # TODO: handle the case when the spot is already occupied
     self.state[row][col] = current_player_symbol
-    return self.check_winner()
+    return self.check_for_winner()
+  
+  def is_board_full(self):
+    # checks the entire board to see if there are any default values of '*' in there and returns true or false
+    for i in range(len(self.state)):
+      for j in range(len(self.state[i])):
+        if self.state[i][j] == '*':
+          return False
+    return True
     
-  def check_winner(self):
+  def check_for_winner(self):
     # return None if there's no winner
     # otherwise, return the symbol of the current player
     # construct a list of possible winning index combinations

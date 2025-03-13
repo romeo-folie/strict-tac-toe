@@ -14,11 +14,14 @@ class Game:
     print("GAME INSTRUCTIONS")
     print("Row and Column values should be between 0-2 inclusive")
     print("Press Ctrl + C to exit\n")
-    print("PLAYERS")
-    print("{} {}\n".format(self.player_X, self.player_O))
   
   def get_next_player(self):
     return 'O' if self.current_player == 'X' else 'X'
+  
+  def game_over(self):
+    if self.board.is_board_full() or self.winner:
+      return True
+    return False
   
   def start(self):
     # this should run in a loop till there's a winner or an interrupt is received from the cmd
@@ -31,7 +34,7 @@ class Game:
     # find a way to make sure this infinite loop doesn't cost me
     # this should also depend on whether the board is full
     
-    while(self.winner is None):
+    while not self.game_over():
       self.board.print()
       print("Current Player is {}\n".format(self.current_player))
       
@@ -48,16 +51,11 @@ class Game:
       self.winner = self.board.play(self.current_player, position)
       self.current_player = self.get_next_player()
       
-    print("Winner is Player {}".format(self.winner))
-    
-    
-if __name__ == '__main__':
-  try:
-    game = Game()
-    game.start()
-  except KeyboardInterrupt:
-    print("\nGame Exited")
-
+    if self.winner:
+      print("Winner is Player {}".format(self.winner))
+    else:
+      print("Tie. Game Over")
+      # TODO: Take input to restart game or quit. yes or no maybe?
 
   
   
