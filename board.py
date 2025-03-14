@@ -1,9 +1,12 @@
+from typing import Tuple
+from player import Player
+
 class Board:
   def __init__(self):
     # representing board state with a 3*3 matrix
-    self.state = [['*'] * 3, ['*'] * 3, ['*'] * 3]
+    self.state = [[' '] * 3, [' '] * 3, [' '] * 3]
   
-  def print(self):
+  def print(self) -> None:
     print("-------------")
     for i, row in enumerate(self.state):
       print("| {} | {} | {} |".format(row[0], row[1], row[2]))
@@ -11,35 +14,26 @@ class Board:
         print("----+---+----")
     print("-------------")
 
-  def reset(self):
-    self.state = [['*'] * 3, ['*'] * 3, ['*'] * 3]
+  def reset(self) -> None:
+    self.state = [[' '] * 3, [' '] * 3, [' '] * 3]
     
-  def play(self, current_player_symbol, position):
-    # serialize position data
-    # modify board state with the given symbol
-    position = map(int, position.replace(',', ' ').split())
-    row, col = next(position), next(position)
-    # TODO: handle the case when the spot is already occupied
-    self.state[row][col] = current_player_symbol
+  def is_position_occupied(self, position: Tuple[int, int]) -> bool:
+    row, col = position
+    return self.state[row][col] != ' '
+    
+  def play(self, current_player: Player, position: Tuple[int, int]) -> str | None:
+    row, col = position
+    self.state[row][col] = current_player.symbol
     return self.check_for_winner()
   
-  def is_board_full(self):
-    # checks the entire board to see if there are any default values of '*' in there and returns true or false
+  def is_board_full(self) -> bool:
     for i in range(len(self.state)):
       for j in range(len(self.state[i])):
-        if self.state[i][j] == '*':
+        if self.state[i][j] == ' ':
           return False
     return True
     
-  def check_for_winner(self):
-    # return None if there's no winner
-    # otherwise, return the symbol of the current player
-    # construct a list of possible winning index combinations
-    # loop through that matrix
-    # for each row, get the indices
-    # compare them and if they match
-    # return that value
-    # if we reach the end of the loop we return None
+  def check_for_winner(self) -> str | None:
     winning_combinations = [
       [(0, 0),(0, 1),(0, 2)],
       [(1,0), (1,1), (1, 2)],

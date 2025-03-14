@@ -1,8 +1,7 @@
 class Player:
-  def __init__(self, symbol):
+  def __init__(self, symbol: str):
     self.symbol = symbol
-    self.score = 0
     
-  def __str__(self):
+  def __str__(self) -> str:
     return self.symbol
     
