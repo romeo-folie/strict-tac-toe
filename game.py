@@ -4,6 +4,7 @@ from typing import Tuple
 from board import Board
 from player import Player
 
+position_pattern = re.compile(r"^[0-2]{1}[,\s]{1}[0-2]{1}$")
 class Game:
   def __init__(self):
     self.board = Board()
@@ -26,7 +27,6 @@ class Game:
     return False
   
   def get_player_input(self) -> Tuple[int, int]:
-    position_pattern = re.compile(r"^[0-2]{1}[,\s]{1}[0-2]{1}$")
     position_input = input("Enter row and column (e.g. 0,0 or 0 0): ")
     if not position_pattern.match(position_input):
       raise ValueError
