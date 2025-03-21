@@ -3,13 +3,14 @@ import sys
 from typing import Tuple
 from board import Board
 from player import Player
+import time
 
 position_pattern = re.compile(r"^[0-2]{1}[,\s]{1}[0-2]{1}$")
 class Game:
   def __init__(self):
     self.board = Board()
     self.player_X = Player('X')
-    self.player_O = Player('O')
+    self.player_O = Player('O', True)
     self.winner = None
     self.current_player = self.player_X
     
@@ -42,24 +43,29 @@ class Game:
       self.board.print()
       print("Current Player is {}\n".format(self.current_player))
       
-      try:
-        position = self.get_player_input()
-      except ValueError:
-        print("Wrong Input. You have forfeited your turn")
-        self.current_player = self.get_next_player()
-        continue
+      if self.current_player.is_computer:
+        print("Thinking...")
+        time.sleep(1)
+        position = self.board.get_computer_move(self.current_player.symbol)
+      else:
+        try:
+          position = self.get_player_input()
+        except ValueError:
+          print("Wrong Input. You have forfeited your turn")
+          self.current_player = self.get_next_player()
+          continue
+        
+        if self.board.is_position_occupied(position):
+          print("\nPOSITION ALREADY OCCUPIED\n")
+          continue
       
-      if self.board.is_position_occupied(position):
-        print("\nPOSITION ALREADY OCCUPIED\n")
-        continue
-      
-      self.winner = self.board.play(self.current_player, position)
+      self.winner = self.board.move(self.current_player, position)
       self.current_player = self.get_next_player()
     
     print("\nGAME OVER")
     self.board.print()
     if self.winner:
-      print("Outcome: Winner is Player {}\n".format(self.winner))
+      print("Outcome: Player {} wins\n".format(self.winner))
     elif self.board.is_board_full():
       print("Outcome: Tie\n")
       
