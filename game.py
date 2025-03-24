@@ -1,11 +1,14 @@
 import re
 import sys
+import time
 from typing import Tuple
 from board import Board
 from player import Player
-import time
+from rich.console import Console
 
+console = Console()
 position_pattern = re.compile(r"^[0-2]{1}[,\s]{1}[0-2]{1}$")
+
 class Game:
   def __init__(self):
     self.board = Board()
@@ -15,9 +18,9 @@ class Game:
     self.current_player = self.player_X
     
   def print_instructions(self) -> None:
-    print("GAME INSTRUCTIONS")
-    print("Row and Column values should be between 0-2 inclusive")
-    print("Press Ctrl + C to exit\n")
+    console.print("\nGAME INSTRUCTIONS", style="bold")
+    console.print("Row and Column values should be between 0-2 inclusive")
+    console.print("Press Ctrl + C to exit\n")
   
   def get_next_player(self) -> Player:
     return self.player_O if self.current_player is self.player_X else self.player_X
@@ -41,7 +44,7 @@ class Game:
     
     while not self.game_over():
       self.board.print()
-      print("Current Player is {}\n".format(self.current_player))
+      console.print("Current Player is {}\n".format(self.current_player), style="yellow")
       
       if self.current_player.is_computer:
         print("Thinking...")
@@ -51,29 +54,29 @@ class Game:
         try:
           position = self.get_player_input()
         except ValueError:
-          print("Wrong Input. You have forfeited your turn")
+          console.print("\n:x: Wrong Input. You have forfeited your turn\n", style="bold red")
           self.current_player = self.get_next_player()
           continue
         
         if self.board.is_position_occupied(position):
-          print("\nPOSITION ALREADY OCCUPIED\n")
+          console.print("\n:prohibited: POSITION ALREADY OCCUPIED\n", style="bold red")
           continue
       
       self.winner = self.board.move(self.current_player, position)
       self.current_player = self.get_next_player()
     
-    print("\nGAME OVER")
+    console.print("\nGAME OVER", style="bold red")
     self.board.print()
     if self.winner:
-      print("Outcome: Player {} wins\n".format(self.winner))
+      console.print("Outcome: Player {} wins :1st_place_medal:\n".format(self.winner), style="green bold")
     elif self.board.is_board_full():
-      print("Outcome: Tie\n")
+      console.print("Outcome: Tie\n", style="yellow bold")
       
     restart_input = input("Restart Game? (y/n): ")
     if restart_input.lower() == 'y':
       self.restart(self.winner)
     else:
-      print("Game Exited")
+      console.print("Game Exited", style="bold red")
       sys.exit(0)
       
   def restart(self, last_winner: str | None) -> None:

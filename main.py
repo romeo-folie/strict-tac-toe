@@ -1,8 +1,8 @@
-from game import Game
+from game import Game, console
 
 if __name__ == '__main__':
   try:
     game = Game()
     game.start()
   except KeyboardInterrupt:
-    print("\nGame Exited")
+    console.print("\nGame Exited", style="bold red")
